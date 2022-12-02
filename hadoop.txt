@@ -1,0 +1,180 @@
+cloud@ubuntu:~$ ls
+Desktop Downloads exp2.odt oddeven Public Videos
+Documents exp1.odt Music Pictures Templates VirtualBox VMs
+cloud@ubuntu:~$ cd Downloads
+cloud@ubuntu:~/Downloads$ tar zxvf jdk-8u60-linux-x64.gz
+cloud@ubuntu:~/Downloads$ cd jdk1.8.0_60/
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ pwd
+/home/cloud/Downloads/jdk1.8.0_60 - COPY THE PATH
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ sudo nano /etc/profile
+A file opens and after the below two lines add
+# /etc/profile: system-wide .profile file for the Bourne shell (sh(1))
+# and Bourne compatible shells (bash(1), ksh(1), ash(1), ...).
+Type the lines as follows
+JAVA_HOME=/home/cloud/Downloads/jdk1.8.0_60
+PATH=$PATH:$JAVA_HOME/bin
+export PATH JAVA_HOME
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ source
+/etc/profilecloud@ubuntu:~/Downloads/jdk1.8.0_60$ java -version
+java version &quot;1.8.0_60&quot;
+Java(TM) SE Runtime Environment (build 1.8.0_60-b27)
+Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ sudo apt-get install openssh-server
+[sudo] password for cloud:
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ ssh-keygen
+Press enter key, no need to type enter key.
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ ssh-copy-id -i localhost
+cloud@localhost&#39;s password:
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ cd ..
+cloud@ubuntu:~/Downloads$ tar zxvf hadoop-2.7.0.tar.gz
+cloud@ubuntu:~/Downloads$ cd hadoop-2.7.0/
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ pwd
+/home/cloud/Downloads/hadoop-2.7.0 - COPY THE PATH
+cloud@ubuntu:~/Downloads/ hadoop-2.7.0$ sudo nano /etc/profile
+A file opens and after the below two lines add
+# /etc/profile: system-wide .profile file for the Bourne shell (sh(1))
+# and Bourne compatible shells (bash(1), ksh(1), ash(1), ...).
+Type the lines as follows
+JAVA_HOME=/home/cloud/Downloads/jdk1.8.0_60
+HADOOP_PREFIX=/home/cloud/Downloads/hadoop-2.7.0
+PATH=$PATH:$JAVA_HOME/bin
+PATH=$PATH:$HADOOP_PREFIX/bin
+export PATH JAVA_HOME HADOOP_PREFIX
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ source /etc/profile
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hadoop version
+Hadoop 2.7.0
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ cd etc
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc$ cd hadoop
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ nano hadoop-env.sh
+Goto the end of the file and enter the line
+export JAVA_HOME=/home/cloud/Downloads/jdk1.8.0_60
+export HADOOP_PREFIX=/home/cloud/Downloads/hadoop-2.7.0
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ nano core-site.xml
+Inside the configuration tag insert the following lines
+&lt;configuration&gt;
+&lt;property&gt;
+&lt;name&gt;fs.defaultFS&lt;/name&gt;
+&lt;value&gt;hdfs://localhost:9000&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ nano hdfs-site.xml
+Inside the configuration tag insert the following lines
+&lt;configuration&gt;
+&lt;property&gt;
+&lt;name&gt;dfs.replication&lt;/name&gt;
+&lt;value&gt;1&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ cp mapred-site.xml.template mapred-
+site.xml
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ nano mapred-site.xml
+Inside the configuration tag insert the following lines
+&lt;configuration&gt;
+&lt;property&gt;
+&lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+&lt;value&gt;yarn&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ nano yarn-site.xml
+&lt;configuration&gt;
+&lt;!-- Site specific YARN configuration properties --&gt;
+&lt;property&gt;
+&lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+&lt;value&gt;mapreduce_shuffle&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ cd ..
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc$ cd ..
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hadoop namenode -format
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/start-dfs.sh
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ jps
+5632 DataNode
+5428 NameNode
+5979 Jps
+5851 SecondaryNameNode
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/start-yarn.sh
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ jps
+5632 DataNode
+6209 NodeManager
+6050 ResourceManager
+5428 NameNode
+6522 Jps
+5851 SecondaryNameNode
+Open a browser and type as: http:\\localhost:50070.
+Choose DataNode.You can see a single node created in it
+You can see the folder created inside the utilities tab.
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -mkdir /user1
+Open a new terminal
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ cd ..
+cloud@ubuntu:~/Downloads$ tar zxvf mrsampledata.tar.gz
+file2.txt
+file5.txt
+file1.txt
+file4.txt
+file3.txt
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -put ../file1.txt /user1
+Inside the browser. Click the folder name user1 and you can see the file1.txt file inside the user1
+folder
+After completing all the process, stop the dfs and yarn as follows:
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/stop- yarn.sh
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/stop- dfs.sh
+
+map reduce
+
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hadoop namenode -format
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/start-dfs.sh
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ jps
+5632 DataNode
+5428 NameNode
+5979 Jps
+5851 SecondaryNameNode
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/start-yarn.sh
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ jps
+5632 DataNode
+6209 NodeManager
+6050 ResourceManager
+5428 NameNode
+6522 Jps
+5851 SecondaryNameNode
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/stop-dfs.sh
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/stop-yarn.sh
+Open a browser and type as: http:\\localhost:50070.
+Choose DataNode.you can see a single node created in it. You can see the folder created inside
+the utilities tab.
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -mkdir /user1
+Open a new terminal
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ cd ..
+cloud@ubuntu:~/Downloads$ tar zxvf mrsampledata.tar.gz
+file2.txt
+file5.txt
+file1.txt
+file4.txt
+file3.txt
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -put ../file1.txt /user1
+Inside the browser. Click the folder name user1 and you can see the file1.txt file inside the user1
+folder.
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hadoop jar share/hadoop/mapreduce/hadoop-
+mapreduce-examples-2.7.0.jar grep /user1/* /output &#39;(CSE)&#39;
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hadoop jar share/hadoop/mapreduce/hadoop-
+mapreduce-examples-2.7.0.jar wordcount /user1/file1.txt /output1
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -cat /output/*
+9894 CSE
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -cat /output1/*
+B.ARCH 9864
+B.TECH(BIO) 9964
+B.TECH(IT) 10000
+BE(AME) 9853
+BE(CIVIL) 10043
+BE(CSE) 9894
+BE(ECE) 10048
+BE(EEE) 9937
+BE(ICE) 9872
+BE(MECH) 9873
+You can also see the output by
+1) output
+Inside Browser Directory
+output --&gt; part-r-00000 --&gt; Click Download
+2) output1
+Inside Browser Directory
+output --&gt; part-r-00000 --&gt; Click Download

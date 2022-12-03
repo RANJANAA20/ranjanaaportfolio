@@ -1,0 +1,305 @@
+Ex. No.: 8 	HADOOP INSTALLATION – ONE NODE HADOOP CLUSTER
+
+AIM:
+      To install hadoop environment in ubuntu.
+
+PROCEDURE:
+1.	Unzip the files jdk and hadoop.
+2.	Set the path of jdk and hadoop in /etc/profile file 
+3.	Check the updation of file by source command.
+4.	Update 5 files as soon in the below command.
+5.	Format the path.
+6.	Start the dfs and check the no. of nodes running.
+7.	Start the yarn and check the no. of nodes running.
+8.	Open the browser and check whether the hadoop is installed correctly.
+9.	Add a file and check whether we can view the file.
+10.	 After completing the process stop dfs and yarn properly.
+
+COMMANDS:
+
+cloud@ubuntu:~$ ls 
+Desktop    Downloads  exp2.odt  oddeven   Public     Videos 
+Documents  exp1.odt   Music     Pictures  Templates  VirtualBox VMs 
+cloud@ubuntu:~$ cd Downloads 
+cloud@ubuntu:~/Downloads$ tar zxvf jdk-8u60-linux-x64.gz
+cloud@ubuntu:~/Downloads$ cd jdk1.8.0_60/ 
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ pwd 
+/home/cloud/Downloads/jdk1.8.0_60 - COPY THE PATH
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ sudo nano /etc/profile 
+A file opens and after the below two lines add
+
+# /etc/profile: system-wide .profile file for the Bourne shell (sh(1)) 
+# and Bourne compatible shells (bash(1), ksh(1), ash(1), ...). 
+
+Type the lines as follows
+JAVA_HOME=/home/cloud/Downloads/jdk1.8.0_60 
+PATH=$PATH:$JAVA_HOME/bin 
+
+export PATH JAVA_HOME
+
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ source /etc/profile 
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ java -version 
+java version "1.8.0_60" 
+Java(TM) SE Runtime Environment (build 1.8.0_60-b27) 
+Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode) 
+
+
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ sudo apt-get install openssh-server 
+[sudo] password for cloud: 
+
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ ssh-keygen 
+Press enter key, no need to type enter key.
+
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ ssh-copy-id -i localhost 
+cloud@localhost's password: 
+
+cloud@ubuntu:~/Downloads/jdk1.8.0_60$ cd .. 
+cloud@ubuntu:~/Downloads$ tar zxvf hadoop-2.7.0.tar.gz 
+
+cloud@ubuntu:~/Downloads$ cd hadoop-2.7.0/ 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ pwd 
+/home/cloud/Downloads/hadoop-2.7.0 - COPY THE PATH
+cloud@ubuntu:~/Downloads/ hadoop-2.7.0$ sudo nano /etc/profile 
+
+A file opens and after the below two lines add
+
+# /etc/profile: system-wide .profile file for the Bourne shell (sh(1)) 
+# and Bourne compatible shells (bash(1), ksh(1), ash(1), ...). 
+
+Type the lines as follows
+JAVA_HOME=/home/cloud/Downloads/jdk1.8.0_60 
+HADOOP_PREFIX=/home/cloud/Downloads/hadoop-2.7.0 
+
+
+PATH=$PATH:$JAVA_HOME/bin 
+PATH=$PATH:$HADOOP_PREFIX/bin 
+
+export PATH JAVA_HOME HADOOP_PREFIX 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ source /etc/profile 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hadoop version 
+Hadoop 2.7.0 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ cd etc 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc$ cd hadoop 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ nano hadoop-env.sh 
+
+Goto the end of the file and enter the line
+
+export JAVA_HOME=/home/cloud/Downloads/jdk1.8.0_60 
+export HADOOP_PREFIX=/home/cloud/Downloads/hadoop-2.7.0 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ nano core-site.xml 
+Inside the configuration tag insert the following lines
+<configuration> 
+<property> 
+<name>fs.defaultFS</name> 
+<value>hdfs://localhost:9000</value> 
+</property> 
+</configuration>
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ nano hdfs-site.xml 
+Inside the configuration tag insert the following lines
+<configuration> 
+<property> 
+<name>dfs.replication</name> 
+<value>1</value> 
+</property>
+</configuration>
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ cp mapred-site.xml.template mapred-site.xml 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ nano mapred-site.xml 
+Inside the configuration tag insert the following lines
+<configuration> 
+<property> 
+<name>mapreduce.framework.name</name> 
+<value>yarn</value> 
+</property> 
+</configuration>
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ nano yarn-site.xml 
+<configuration> 
+
+<!-- Site specific YARN configuration properties --> 
+<property> 
+<name>yarn.nodemanager.aux-services</name> 
+<value>mapreduce_shuffle</value> 
+</property> 
+</configuration> 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc/hadoop$ cd ..
+cloud@ubuntu:~/Downloads/hadoop-2.7.0/etc$ cd ..
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hadoop namenode -format 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/start-dfs.sh 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ jps 
+5632 DataNode 
+5428 NameNode 
+5979 Jps 
+5851 SecondaryNameNode 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/start-yarn.sh 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ jps 
+5632 DataNode 
+6209 NodeManager 
+6050 ResourceManager 
+5428 NameNode 
+6522 Jps 
+5851 SecondaryNameNode
+Open a browser and type as: http:\\localhost:50070.
+Choose DataNode. U can see a single node created in it
+
+
+
+
+ 
+
+
+U can see the folder created inside utilities tab. 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -mkdir /user1
+
+
+
+
+
+
+
+ 
+
+Open a new terminal
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ cd .. 
+cloud@ubuntu:~/Downloads$ tar zxvf mrsampledata.tar.gz 
+file2.txt 
+file5.txt 
+file1.txt 
+file4.txt 
+file3.txt 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -put ../file1.txt /user1 
+
+Inside the browser. Click the folder name user1 and you can see the file1.txt file inside the user1 folder
+
+
+ 
+
+After completing all the process, stop the dfs and yarn as follows:
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/stop- yarn.sh  
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/stop- dfs.sh 
+
+
+
+
+
+
+
+RESULT:
+Thus hadoop is installed in the physical machine and executed successfully.
+
+
+Ex. No.: 9	WORD COUNT PROGRAM – USING MAP AND 
+REDUCE TASK
+
+AIM:
+       To execute wordcount program using map and reduce task
+
+PROCEDURE:
+1.	Format the path.
+2.	Start the dfs and check the no. of nodes running.
+3.	Start the yarn and check the no. of nodes running.
+4.	Open the browser and check whether the hadoop is installed correctly.
+5.	Add a file and check whether we can view the file.
+6.	Implement the grep command for the file added and see the result.
+7.	Implement the wordcount command for the file added and see the result.
+8.	After completing the process stop dfs and yarn properly.
+
+COMMANDS:
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hadoop namenode -format 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/start-dfs.sh 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ jps 
+5632 DataNode 
+5428 NameNode 
+5979 Jps 
+5851 SecondaryNameNode 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/start-yarn.sh 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ jps 
+5632 DataNode 
+6209 NodeManager 
+6050 ResourceManager 
+5428 NameNode 
+6522 Jps 
+5851 SecondaryNameNode
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/stop-dfs.sh  
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ sbin/stop-yarn.sh 
+Open a browser and type as: http:\\localhost:50070.
+Choose DataNode. U can see a single node created in it
+
+
+
+
+ 
+
+
+U can see the folder created inside utilities tab. 
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -mkdir /user1
+
+
+
+
+ 
+
+Open a new terminal
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ cd .. 
+cloud@ubuntu:~/Downloads$ tar zxvf mrsampledata.tar.gz 
+file2.txt 
+file5.txt 
+file1.txt 
+file4.txt 
+file3.txt 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -put ../file1.txt /user1 
+
+Inside the browser. Click the folder name user1 and you can see the file1.txt file inside the user1 folder
+
+
+ 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.0.jar grep /user1/* /output '(CSE)' 
+
+ cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.0.jar wordcount /user1/file1.txt /output1 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -cat /output/*
+9894	CSE 
+
+cloud@ubuntu:~/Downloads/hadoop-2.7.0$ bin/hdfs dfs -cat /output1/* 
+B.ARCH	9864 
+B.TECH(BIO) 9964 
+B.TECH(IT)	10000 
+BE(AME)	9853 
+BE(CIVIL)	10043 
+BE(CSE)	9894 
+BE(ECE)	10048 
+BE(EEE)	9937 
+BE(ICE)	9872 
+BE(MECH)	9873 
+
+You can also see the ouput by
+1) output
+Inside Browser Directory
+output --> part-r-00000 --> Click Download
+
+2) output1
+Inside Browser Directory
+output --> part-r-00000 --> Click Download
+
+
+ 
+
+
+
+
+
+
+
+RESULT: 
+	       Thus the wordcount program using map and reduce task is executed successfully.
+
